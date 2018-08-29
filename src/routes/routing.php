@@ -1226,10 +1226,11 @@ $app->put('/pr/prinputrecord', function(Request $request, Response $response){
 	//echo $arrlength;
 	
 	$PR_NUMBER = $dataarray['prno'];
+	$PR_COSTCENTER = $dataarray['costcenter'];
 	$PR_GL_NUMBER = $dataarray['glcost'];
 	$PR_DATE = $dataarray['prdate'];
 	$PR_ITEM_DETAIL = $dataarray['itemdesc'];
-	$PR_UINT_PRICE = $dataarray['unitprice'];
+	$PR_UNIT_PRICE = $dataarray['unitprice'];
 	$PR_QTY = $dataarray['qty'];
 	$PR_UNIT_NAME = $dataarray['unit'];
 	$PR_AMOUNT_PRICE = $dataarray['amountprice'];
@@ -1238,8 +1239,8 @@ $app->put('/pr/prinputrecord', function(Request $request, Response $response){
 	$PR_REMARK = $dataarray['remark'];
 
 
-	$sql = "INSERT INTO ITDB.PR_Record (PR_NUMBER, PR_GL_NUMBER, PR_DATE, PR_ITEM_DETAIL, PR_UINT_PRICE, PR_QTY, PR_UNIT_NAME, PR_AMOUNT_PRICE, PR_SUPPLIER_NAME, PR_DUE_DATE, PR_REMARK) VALUES ".
-		"(:PR_NUMBER, :PR_GL_NUMBER, :PR_DATE, :PR_ITEM_DETAIL, :PR_UINT_PRICE, :PR_QTY, :PR_UNIT_NAME, :PR_AMOUNT_PRICE, :PR_SUPPLIER_NAME, :PR_DUE_DATE, :PR_REMARK)";
+	$sql = "INSERT INTO ITDB.PR_Record (PR_NUMBER, PR_COSTCENTER, PR_GL_NUMBER, PR_DATE, PR_ITEM_DETAIL, PR_UNIT_PRICE, PR_QTY, PR_UNIT_NAME, PR_AMOUNT_PRICE, PR_SUPPLIER_NAME, PR_DUE_DATE, PR_REMARK) VALUES ".
+		"(:PR_NUMBER, :PR_COSTCENTER, :PR_GL_NUMBER, :PR_DATE, :PR_ITEM_DETAIL, :PR_UNIT_PRICE, :PR_QTY, :PR_UNIT_NAME, :PR_AMOUNT_PRICE, :PR_SUPPLIER_NAME, :PR_DUE_DATE, :PR_REMARK)";
 	
 	try {
 		$db = new itdb();
@@ -1247,10 +1248,11 @@ $app->put('/pr/prinputrecord', function(Request $request, Response $response){
 		$stmt = $db->prepare($sql);
 
 		$stmt->bindParam(':PR_NUMBER', $PR_NUMBER);
+		$stmt->bindParam(':PR_COSTCENTER', $PR_COSTCENTER);
 		$stmt->bindParam(':PR_GL_NUMBER', $PR_GL_NUMBER);
 		$stmt->bindParam(':PR_DATE', $PR_DATE);
 		$stmt->bindParam(':PR_ITEM_DETAIL', $PR_ITEM_DETAIL);
-		$stmt->bindParam(':PR_UINT_PRICE', $PR_UINT_PRICE);
+		$stmt->bindParam(':PR_UNIT_PRICE', $PR_UNIT_PRICE);
 		$stmt->bindParam(':PR_QTY', $PR_QTY);
 		$stmt->bindParam(':PR_UNIT_NAME', $PR_UNIT_NAME);
 		$stmt->bindParam(':PR_AMOUNT_PRICE', $PR_AMOUNT_PRICE);
