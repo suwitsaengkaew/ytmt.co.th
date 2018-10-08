@@ -1223,47 +1223,60 @@ $app->put('/pr/prinputrecord', function(Request $request, Response $response){
 	$data = $request->getbody();
 	$dataarray = json_decode($data, true);
 	$arrlength = count($dataarray);
-	//echo $arrlength;
-	
-	$PR_NUMBER = $dataarray['prno'];
-	$PR_COSTCENTER = $dataarray['costcenter'];
-	$PR_GL_NUMBER = $dataarray['glcost'];
+	$PR_TYPE = $dataarray['prtype'];
+	$PR_PLANT = $dataarray['prplant'];
+	$PR_BUZAREA = $dataarray['prbuzarea'];
+	$PR_PROFIT_AREA = $dataarray['prprofitarea'];
+	$PR_REQUESTBY = $dataarray['prrequestby'];
+	$PR_NUMBER = $dataarray['prnumber'];
 	$PR_DATE = $dataarray['prdate'];
-	$PR_ITEM_DETAIL = $dataarray['itemdesc'];
-	$PR_UNIT_PRICE = $dataarray['unitprice'];
-	$PR_QTY = $dataarray['qty'];
-	$PR_UNIT_NAME = $dataarray['unit'];
-	$PR_AMOUNT_PRICE = $dataarray['amountprice'];
-	$PR_SUPPLIER_NAME = $dataarray['suppliername'];
-	$PR_DUE_DATE = $dataarray['duedate'];
-	$PR_REMARK = $dataarray['remark'];
+	$PR_DUE_DATE = $dataarray['prdlvdate'];
+	$PR_INVNUMBER = $dataarray['prinvnumber'];
+	$PR_SUPPLIER_NAME = $dataarray['prsuppliername'];
+	$PR_ITEM_DETAIL = $dataarray['pritemdesc'];
+	$PR_QTY = $dataarray['prqty'];
+	$PR_UNIT_NAME = $dataarray['prunit'];
+	$PR_UNIT_PRICE = $dataarray['prunitprice'];
+	$PR_AMOUNT_PRICE = $dataarray['prtotalprice'];
+	$PR_CURRENCY = $dataarray['prcurrency'];
+	$PR_REMARK = $dataarray['prremark'];
 
-
-	$sql = "INSERT INTO ITDB.PR_Record (PR_NUMBER, PR_COSTCENTER, PR_GL_NUMBER, PR_DATE, PR_ITEM_DETAIL, PR_UNIT_PRICE, PR_QTY, PR_UNIT_NAME, PR_AMOUNT_PRICE, PR_SUPPLIER_NAME, PR_DUE_DATE, PR_REMARK) VALUES ".
-		"(:PR_NUMBER, :PR_COSTCENTER, :PR_GL_NUMBER, :PR_DATE, :PR_ITEM_DETAIL, :PR_UNIT_PRICE, :PR_QTY, :PR_UNIT_NAME, :PR_AMOUNT_PRICE, :PR_SUPPLIER_NAME, :PR_DUE_DATE, :PR_REMARK)";
+	$sql = "INSERT INTO ITDB.PR_Record ". 
+		    "(PR_TYPE, PR_PLANT, PR_PROFIT_AREA, PR_BUSINESS_AREA, PR_REQUEST_BY, PR_NUMBER, PR_DATE, PR_DUE_DATE, PR_INVNUMBER, PR_SUPPLIER_NAME, PR_ITEM_DETAIL, PR_QTY, PR_UNIT_NAME, PR_UNIT_PRICE, PR_AMOUNT_PRICE, PR_CURRENCY, PR_REMARK) ".
+			"VALUES ('".$PR_TYPE."', '".$PR_PLANT."', '".$PR_BUZAREA."', '".$PR_PROFIT_AREA."', '".$PR_REQUESTBY."', '".$PR_NUMBER."', '".$PR_DATE."', '".$PR_DUE_DATE."', '".$PR_INVNUMBER."', '".$PR_SUPPLIER_NAME."', '".$PR_ITEM_DETAIL."',".$PR_QTY.", '".$PR_UNIT_NAME."', ".$PR_UNIT_PRICE.", ".$PR_AMOUNT_PRICE.", '".$PR_CURRENCY."', '".$PR_REMARK."')";
 	
+	// echo "SQL Statement -> ".$sql;			
 	try {
 		$db = new itdb();
 		$db = $db->connect();
 		$stmt = $db->prepare($sql);
-
-		$stmt->bindParam(':PR_NUMBER', $PR_NUMBER);
-		$stmt->bindParam(':PR_COSTCENTER', $PR_COSTCENTER);
-		$stmt->bindParam(':PR_GL_NUMBER', $PR_GL_NUMBER);
-		$stmt->bindParam(':PR_DATE', $PR_DATE);
-		$stmt->bindParam(':PR_ITEM_DETAIL', $PR_ITEM_DETAIL);
-		$stmt->bindParam(':PR_UNIT_PRICE', $PR_UNIT_PRICE);
-		$stmt->bindParam(':PR_QTY', $PR_QTY);
-		$stmt->bindParam(':PR_UNIT_NAME', $PR_UNIT_NAME);
-		$stmt->bindParam(':PR_AMOUNT_PRICE', $PR_AMOUNT_PRICE);
-		$stmt->bindParam(':PR_SUPPLIER_NAME', $PR_SUPPLIER_NAME);
-		$stmt->bindParam(':PR_DUE_DATE', $PR_DUE_DATE);
-		$stmt->bindParam(':PR_REMARK', $PR_REMARK);
 		$stmt->execute();
-		echo '{"notice": {"text": "Data Added"}}';
+		$myarray = Array();
+		echo json_encode('[{"notice": {"text": "Added"}}]');
 	}
-	catch (PDOException $e){
-		echo '{"error": {"text": '.$e->getMessage().'}}';
+	catch (PDOException $e) {
+		echo json_encode('[ {"notice": [{"text": "Error"}, {"text": "'.$e->getMessage().'"}] } ]');
+		// echo '[ {"notice": {"text": "'.$e->getMessage().'"}} ]';
 	}
 });
+
+$app->get('/pr/prsearch', function(Request $request, Response $response) {
+	$sql = "SELECT PR_TYPE, PR_PLANT, PR_PROFIT_AREA, PR_NUMBER, PR_BUSINESS_AREA, PR_INVNUMBER, PR_DATE, PR_ITEM_DETAIL, PR_UNIT_PRICE, PR_QTY, PR_UNIT_NAME, PR_AMOUNT_PRICE,  PR_SUPPLIER_NAME, PR_CURRENCY, PR_DUE_DATE, PR_REMARK, PR_REQUEST_BY ".
+	"FROM  ITDB.PR_Record";
+
+	try {
+		$db = new itdb();
+		$db = $db->connect();
+		$stmt = $db->query($sql);
+		$result = $stmt->fetchAll(PDO::FETCH_OBJ);
+		$db = null;
+		echo json_encode($result);
+	}
+	catch (PDOException $e) {
+		echo '[ {"error": {"text": "'.$e->getMessage().'"}} ]';
+	}
+});
+
+
+
 // *** PR Record *** //
